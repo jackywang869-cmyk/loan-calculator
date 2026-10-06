@@ -1,0 +1,14 @@
+{
+  "name": "loan-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "純前端貸款計算器：等額本息／等額本金、完整還款計畫明細表",
+  "scripts": {
+    "test": "node test-core.js",
+    "test:ui": "node smoke-ui.js",
+    "test:all": "npm test && npm run test:ui"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2"
+  }
+}

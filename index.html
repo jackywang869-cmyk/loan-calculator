@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>貸款計算器 · 還款計畫試算</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <h1>貸款計算器</h1>
+    <p class="sub">支援等額本息／等額本金，自動產生完整還款計畫明細表</p>
+  </header>
+
+  <!-- ======================= 輸入區 ======================= -->
+  <form id="loanForm" class="card" novalidate autocomplete="off">
+    <div class="grid">
+
+      <div class="field">
+        <label for="amount">貸款金額（元）</label>
+        <input id="amount" type="text" inputmode="decimal" placeholder="例如 3,000,000">
+        <p class="err" id="err-amount" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="term">貸款期限</label>
+        <div class="combo">
+          <input id="term" type="text" inputmode="decimal" placeholder="例如 20">
+          <select id="termUnit" aria-label="期限單位">
+            <option value="year">年</option>
+            <option value="month">個月</option>
+          </select>
+        </div>
+        <p class="err" id="err-term" role="alert"></p>
+        <p class="hint" id="hint-term">1 年 = 12 個月，切換單位自動換算</p>
+      </div>
+
+      <div class="field">
+        <label for="rate">利率</label>
+        <div class="combo">
+          <input id="rate" type="text" inputmode="decimal" placeholder="例如 2.5">
+          <select id="rateUnit" aria-label="利率單位">
+            <option value="annual">年利率 %</option>
+            <option value="monthly">月利率 %</option>
+          </select>
+        </div>
+        <p class="err" id="err-rate" role="alert"></p>
+        <p class="hint" id="hint-rate">年利率 ÷ 12 = 月利率</p>
+      </div>
+
+      <div class="field">
+        <label for="method">還款方式</label>
+        <select id="method">
+          <option value="equalTotal">等額本息（每期還款額固定）</option>
+          <option value="equalPrincipal">等額本金（每期本金固定）</option>
+        </select>
+        <p class="err" id="err-method" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="freq">繳款週期</label>
+        <select id="freq">
+          <option value="12" selected>每月繳款</option>
+          <option value="4">每季繳款</option>
+          <option value="2">每半年繳款</option>
+          <option value="1">每年繳款</option>
+        </select>
+        <p class="err" id="err-freq" role="alert"></p>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn primary" id="btnCalc">開始計算</button>
+      <button type="button" class="btn" id="btnReset">重設</button>
+      <button type="button" class="btn ghost" id="btnSample">載入範例</button>
+    </div>
+  </form>
+
+  <!-- ======================= 結果區 ======================= -->
+  <section id="result" class="hidden">
+
+    <div class="card">
+      <div class="card-head">
+        <h2>彙總資訊</h2>
+        <p class="meta" id="sumMeta"></p>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span class="k">首期還款</span><strong class="v" id="sumFirst">—</strong><span class="u" id="sumFirstUnit"></span></div>
+        <div class="stat"><span class="k">末期還款</span><strong class="v" id="sumLast">—</strong><span class="u" id="sumLastUnit"></span></div>
+        <div class="stat"><span class="k">還款總額</span><strong class="v highlight" id="sumTotal">—</strong><span class="u">元</span></div>
+        <div class="stat"><span class="k">本金總額</span><strong class="v" id="sumPrincipal">—</strong><span class="u">元</span></div>
+        <div class="stat"><span class="k">利息總額</span><strong class="v interest" id="sumInterest">—</strong><span class="u">元</span></div>
+        <div class="stat"><span class="k">利息佔貸款金額</span><strong class="v interest" id="sumRatio">—</strong><span class="u" id="sumRatioSub"></span></div>
+      </div>
+
+      <div class="bar" role="img" aria-label="本金與利息佔比">
+        <div class="bar-principal" id="barPrincipal"><span>本金</span></div>
+        <div class="bar-interest" id="barInterest"><span>利息</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>每期本金／利息結構</h2>
+        <p class="meta">藍色為當期本金，橘色為當期利息，灰線為剩餘本金</p>
+      </div>
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="每期本金與利息結構圖"></svg>
+      </div>
+      <div class="legend">
+        <span><i class="dot p"></i>當期本金</span>
+        <span><i class="dot i"></i>當期利息</span>
+        <span><i class="dot b"></i>剩餘本金</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>還款計畫明細表</h2>
+        <div class="tools">
+          <label class="chk"><input type="checkbox" id="showAll"> 一次展開全部期數</label>
+          <button type="button" class="btn small" id="btnCsv">匯出 CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap" id="tableWrap">
+        <table class="schedule">
+          <thead>
+            <tr>
+              <th class="num">期數</th>
+              <th class="num">當期還款額</th>
+              <th class="num">當期本金</th>
+              <th class="num">當期利息</th>
+              <th class="num">累計已還利息</th>
+              <th class="num">剩餘本金</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+          <tfoot>
+            <tr>
+              <th>合計</th>
+              <th class="num" id="footPayment">—</th>
+              <th class="num" id="footPrincipal">—</th>
+              <th class="num" id="footInterest">—</th>
+              <th class="num" id="footCumInterest">—</th>
+              <th class="num">0.00</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="note">
+        金額皆四捨五入至兩位小數；計算過程以「分」為單位做整數運算，末期本金吸收尾差，故最後一期剩餘本金必定為 0。
+      </p>
+    </div>
+
+  </section>
+
+  <footer class="foot">計算結果僅供試算參考，實際金額以貸款機構核定為準。</footer>
+</div>
+
+<script src="loan-core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

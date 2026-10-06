@@ -1,0 +1,27 @@
+name: tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 安裝相依套件
+        run: npm install
+
+      - name: 核心邏輯測試
+        run: npm test
+
+      - name: 介面冒煙測試
+        run: npm run test:ui

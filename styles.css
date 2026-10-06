@@ -1,0 +1,254 @@
+/* ================= 貸款計算器 · 樣式（淺色主題 / 行動優先） ================= */
+:root {
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --line: #e3e8f0;
+  --text: #1f2937;
+  --text-2: #64748b;
+  --primary: #2563eb;
+  --primary-soft: #eff4ff;
+  --interest: #ea580c;
+  --danger: #dc2626;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 6px 20px rgba(16, 24, 40, .06);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+
+.head { margin-bottom: 18px; }
+.head h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: .5px; }
+.head .sub { margin: 0; color: var(--text-2); font-size: 14px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-head h2 { font-size: 17px; margin: 0; }
+.card-head .meta { margin: 0; color: var(--text-2); font-size: 13px; }
+
+/* ---------------- 表單 ---------------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.field { min-width: 0; }
+.field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input[type="text"], select {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 16px; /* 16px 以上可避免 iOS 自動放大 */
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #ccd4e0;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+input[type="text"]:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+input.invalid, select.invalid { border-color: var(--danger); }
+
+.combo { display: flex; gap: 8px; }
+.combo input { flex: 1 1 auto; min-width: 0; }
+.combo select { flex: 0 0 118px; width: 118px; }
+
+.hint { margin: 5px 0 0; font-size: 12px; color: var(--text-2); }
+.err {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: var(--danger);
+  min-height: 0;
+}
+.err:empty { display: none; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn {
+  padding: 11px 18px;
+  font-size: 15px;
+  font-family: inherit;
+  border-radius: 10px;
+  border: 1px solid #ccd4e0;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.btn:hover { background: #f2f5fa; }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 600; }
+.btn.primary:hover { background: #1d4fd8; }
+.btn.ghost { border-style: dashed; color: var(--text-2); }
+.btn.small { padding: 7px 12px; font-size: 13px; }
+
+/* ---------------- 彙總 ---------------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.stat {
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.stat .k { font-size: 12px; color: var(--text-2); }
+.stat .v {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+}
+.stat .v.highlight { color: var(--primary); }
+.stat .v.interest { color: var(--interest); }
+.stat .u { font-size: 12px; color: var(--text-2); }
+
+.bar {
+  display: flex;
+  height: 26px;
+  margin-top: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eef1f6;
+  font-size: 12px;
+  color: #fff;
+}
+.bar > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width .3s ease;
+}
+.bar .bar-principal { background: var(--primary); }
+.bar .bar-interest { background: var(--interest); }
+
+/* ---------------- 圖表 ---------------- */
+.chart-wrap {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fbfcfe;
+  padding: 6px;
+}
+#chart { display: block; width: 100%; height: 220px; }
+
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 13px; color: var(--text-2); }
+.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.legend .dot.p { background: var(--primary); }
+.legend .dot.i { background: var(--interest); }
+.legend .dot.b { background: #94a3b8; }
+
+/* ---------------- 明細表 ---------------- */
+.tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.chk { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.chk input { width: 16px; height: 16px; }
+
+.table-wrap {
+  max-height: 60vh;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+table.schedule { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.schedule th, table.schedule td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+table.schedule thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f1f5f9;
+  font-size: 13px;
+  text-align: left;
+}
+table.schedule tbody tr:nth-child(even) { background: #fafbfd; }
+table.schedule tbody tr:hover { background: var(--primary-soft); }
+table.schedule .num { text-align: right; font-variant-numeric: tabular-nums; }
+table.schedule td.p-int { color: var(--interest); }
+table.schedule td.more { text-align: center; color: var(--text-2); font-size: 13px; white-space: normal; background: #fff; }
+table.schedule tfoot th {
+  position: sticky;
+  bottom: 0;
+  background: #f1f5f9;
+  font-size: 13px;
+  text-align: left;
+}
+
+.note { margin: 10px 0 0; font-size: 12px; color: var(--text-2); }
+.foot { text-align: center; font-size: 12px; color: var(--text-2); margin-top: 24px; }
+
+.hidden { display: none !important; }
+
+/* ---------------- 行動裝置 ---------------- */
+@media (max-width: 720px) {
+  .wrap { padding: 16px 12px 40px; }
+  .head h1 { font-size: 22px; }
+  .card { padding: 14px; }
+  .grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat .v { font-size: 18px; }
+  .actions .btn { flex: 1 1 100%; }
+  #chart { height: 170px; }
+  .table-wrap { max-height: 52vh; }
+  table.schedule { font-size: 13px; }
+  table.schedule th, table.schedule td { padding: 8px 10px; }
+}
+
+@media (max-width: 380px) {
+  .stats { grid-template-columns: 1fr; }
+}

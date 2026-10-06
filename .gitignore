@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.npm/
+
+# 作業系統
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 產出檔（匯出的報表、紀錄）
+*.csv
+*.log
+dist/
